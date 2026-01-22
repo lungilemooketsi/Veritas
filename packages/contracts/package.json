@@ -1,0 +1,33 @@
+{
+  "name": "@veritas/contracts",
+  "version": "1.0.0",
+  "description": "Veritas Marketplace Smart Contracts",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",
+    "deploy:arbitrum": "hardhat run scripts/deploy.ts --network arbitrum",
+    "deploy:polygon-testnet": "hardhat run scripts/deploy.ts --network polygonMumbai",
+    "deploy:arbitrum-testnet": "hardhat run scripts/deploy.ts --network arbitrumSepolia",
+    "verify": "hardhat verify",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "clean": "hardhat clean"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
+    "@chainlink/contracts-ccip": "^1.4.0",
+    "@typechain/ethers-v6": "^0.5.0",
+    "@typechain/hardhat": "^9.0.0",
+    "hardhat": "^2.19.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solhint": "^4.1.0",
+    "typechain": "^8.3.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "ethers": "^6.9.0"
+  }
+}

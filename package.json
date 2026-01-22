@@ -1,0 +1,26 @@
+{
+  "name": "veritas-marketplace",
+  "version": "1.0.0",
+  "description": "Web3 Marketplace with Stripe Fiat Onramp, Cross-Chain Interoperability, and Soulbound Token Reputation",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "compile": "turbo run compile",
+    "deploy:contracts": "cd packages/contracts && npm run deploy",
+    "deploy:subgraph": "cd packages/subgraph && npm run deploy"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

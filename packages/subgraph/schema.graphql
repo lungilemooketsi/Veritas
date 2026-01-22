@@ -1,0 +1,224 @@
+# ============================================
+# VERITAS MARKETPLACE SUBGRAPH SCHEMA
+# ============================================
+
+# ============ ENUMS ============
+
+enum TradeStatus {
+  None
+  Created
+  SellerAccepted
+  Delivered
+  Completed
+  Disputed
+  Resolved
+  Cancelled
+  Expired
+}
+
+enum BadgeTier {
+  None
+  Bronze
+  Silver
+  Gold
+  Platinum
+  Diamond
+}
+
+# ============ ENTITIES ============
+
+"""
+User entity - represents a marketplace participant
+"""
+type User @entity {
+  id: ID! # wallet address
+  
+  # Trades
+  tradesAsBuyer: [Trade!]! @derivedFrom(field: "buyer")
+  tradesAsSeller: [Trade!]! @derivedFrom(field: "seller")
+  totalTradesAsBuyer: BigInt!
+  totalTradesAsSeller: BigInt!
+  
+  # Reputation
+  successfulTrades: BigInt!
+  averageRating: BigDecimal!
+  totalRatingPoints: BigInt!
+  ratingCount: BigInt!
+  disputesWon: BigInt!
+  disputesLost: BigInt!
+  
+  # Badges
+  badges: [Badge!]! @derivedFrom(field: "owner")
+  highestBadgeTier: BadgeTier!
+  
+  # Timestamps
+  joinedAt: BigInt!
+  lastTradeAt: BigInt
+  
+  # Stats
+  totalVolumeTraded: BigDecimal!
+  
+  # Cross-chain data
+  crossChainTrades: BigInt!
+  primaryChainId: BigInt!
+}
+
+"""
+Trade entity - represents a marketplace trade
+"""
+type Trade @entity {
+  id: ID! # tradeId (bytes32)
+  
+  # Participants
+  buyer: User!
+  seller: User!
+  
+  # Trade details
+  paymentToken: Bytes!
+  amount: BigDecimal!
+  platformFee: BigDecimal!
+  sellerReceived: BigDecimal
+  
+  # Status
+  status: TradeStatus!
+  
+  # Content
+  itemDescription: String!
+  deliveryProof: String
+  
+  # Ratings
+  buyerRating: Int
+  sellerRating: Int
+  
+  # Timestamps
+  createdAt: BigInt!
+  expiresAt: BigInt!
+  acceptedAt: BigInt
+  deliveredAt: BigInt
+  completedAt: BigInt
+  cancelledAt: BigInt
+  
+  # Transaction info
+  creationTxHash: Bytes!
+  completionTxHash: Bytes
+  
+  # Dispute (if any)
+  dispute: Dispute @derivedFrom(field: "trade")
+}
+
+"""
+Dispute entity - represents a trade dispute
+"""
+type Dispute @entity {
+  id: ID! # tradeId
+  trade: Trade!
+  
+  initiator: User!
+  reason: String!
+  
+  buyerEvidence: String
+  sellerEvidence: String
+  
+  winner: User
+  
+  initiatedAt: BigInt!
+  resolvedAt: BigInt
+  isResolved: Boolean!
+  
+  amountAwarded: BigDecimal
+}
+
+"""
+Badge entity - represents a soulbound reputation badge
+"""
+type Badge @entity {
+  id: ID! # tokenId
+  tokenId: BigInt!
+  
+  owner: User!
+  tier: BadgeTier!
+  
+  # Snapshot at mint
+  tradesAtMint: BigInt!
+  ratingAtMint: BigDecimal!
+  
+  # Metadata
+  mintedAt: BigInt!
+  mintTxHash: Bytes!
+  sourceChainId: BigInt!
+  
+  # EIP-5192
+  isLocked: Boolean!
+}
+
+"""
+ReputationUpdate entity - tracks reputation changes over time
+"""
+type ReputationUpdate @entity {
+  id: ID! # txHash-logIndex
+  
+  user: User!
+  
+  newTrades: BigInt!
+  newRating: BigDecimal!
+  
+  previousTrades: BigInt!
+  previousRating: BigDecimal!
+  
+  timestamp: BigInt!
+  txHash: Bytes!
+  blockNumber: BigInt!
+}
+
+"""
+Global statistics
+"""
+type MarketplaceStats @entity {
+  id: ID! # "global"
+  
+  totalTrades: BigInt!
+  totalCompletedTrades: BigInt!
+  totalVolume: BigDecimal!
+  totalFees: BigDecimal!
+  
+  totalUsers: BigInt!
+  totalBadgesMinted: BigInt!
+  
+  averageTradeSize: BigDecimal!
+  disputeRate: BigDecimal!
+  
+  lastUpdated: BigInt!
+}
+
+"""
+Daily statistics snapshot
+"""
+type DailyStats @entity {
+  id: ID! # timestamp/86400 (day number)
+  date: BigInt!
+  
+  tradesCreated: BigInt!
+  tradesCompleted: BigInt!
+  volume: BigDecimal!
+  fees: BigDecimal!
+  
+  newUsers: BigInt!
+  badgesMinted: BigInt!
+  disputes: BigInt!
+}
+
+"""
+Cross-chain reputation sync event
+"""
+type CrossChainSync @entity {
+  id: ID! # txHash-logIndex
+  
+  user: User!
+  sourceChainId: BigInt!
+  
+  tradesAdded: BigInt!
+  ratingAdded: BigDecimal!
+  
+  timestamp: BigInt!
+  txHash: Bytes!
+}
