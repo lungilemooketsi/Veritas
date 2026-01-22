@@ -94,29 +94,6 @@ npm run compile
 npm run dev
 ```
 
-### Environment Variables
-
-Create a `.env.local` file:
-
-```env
-# Blockchain
-PRIVATE_KEY=your_deployer_private_key
-POLYGON_RPC_URL=https://polygon-mainnet.g.alchemy.com/v2/YOUR_KEY
-ARBITRUM_RPC_URL=https://arb-mainnet.g.alchemy.com/v2/YOUR_KEY
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_PUBLISHABLE_KEY=pk_test_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-
-# The Graph
-GRAPH_API_KEY=your_graph_api_key
-SUBGRAPH_ENDPOINT=https://api.thegraph.com/subgraphs/name/...
-
-# App
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
 ## Core Workflows
 
 ### 1. User Onboarding Flow
